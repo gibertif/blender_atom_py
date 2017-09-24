@@ -3,9 +3,10 @@
 
 TODO:
 
-* Class that read a topology (json file from blender-chemical)
-* Ball representation
-* Ball and stick representation
+* Class that read a topology (json file from blender-chemical).
+* Transform a trajectory in time series in blender.
+* Ball representation.
+* Ball and stick representation.
 
 
 

@@ -1,9 +1,3 @@
-# TODO 
-# -function to write a xyz 
-# -function to write a lammps
-# -function to write a lammps-data
-# -investigate if we can read .dcd
-
 import numpy as np
 
 class trajectory:
@@ -19,7 +13,7 @@ class trajectory:
         """
         self._get_steps(filename)
         self._get_atoms(filename)
-        self.traj=np.rec.array(np.zeros((self.steps,self.natoms),dtype=[('name','U4'),('pos',float,3)]))
+        self.traj=np.rec.array(np.zeros((self.steps,self.natoms),dtype=[('serial',int),('name','U4'),('pos',float,3)]))
 
         fin=open(filename,'r')
         for it in range(self.steps):
@@ -27,6 +21,7 @@ class trajectory:
             line=fin.readline()
             for at in range(self.natoms):
                 line=fin.readline()
+                self.traj[it,at].serial=at
                 self.traj[it,at].name=line.split()[0]
                 self.traj[it,at].pos[0]=line.split()[1]
                 self.traj[it,at].pos[1]=line.split()[2]
@@ -47,7 +42,8 @@ class trajectory:
 
     def __getitem__(self,index):
             return self.traj[index]
-        
+    
+    
     def _rewind(self,filename):
         with open(filename,'r') as fi:
             fi.seek(0,0)
@@ -74,9 +70,6 @@ class trajectory:
             self.field=len(fi.readline().split())
         
         self._rewind(filename)
-
-    
-
 
 
 
