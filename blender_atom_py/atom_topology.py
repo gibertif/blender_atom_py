@@ -10,14 +10,23 @@ class topology:
             data=json.load(fl)
         return data
 
-    def construct_topology(self,snapshot):
+    def create_elements(self,snapshot):
+        unique,count = np.unique(snapshot.name,return_counts=True)
+
+        for element in unique:
+            color=self.standard[element]["color"]
+            radius=self.standard[element]["radius"]
+            self.elements = np.append(self.elements,[color,radius])
+
+
+    def create_bonds(self,snapshot):
         for el1 in it.permutations(snapshot,2):
             vec_d = el1[0].pos - el1[1].pos
             dist = np.sqrt(np.dot(vec_d,vec_d))
             if dist < self.standard[el1[0].name]["radius"]+self.standard[el1[1].name]["radius"]:
-                self.bonds=np.append(self.bonds,[[el1[0].serial,el1[1].serial],1])
+                self.bonds=np.append(self.bonds,[[el1[0].serial,el1[1].serial],1,self.standard["bond"]["radius"]])
 
-    def clear_topology(self):
+    def clear_bonds(self):
         if self.bonds:
             self.bonds=np.rec.array(np.zeros(0,dtype=[('atoms',int,(2)),('order',int)]))
 
@@ -28,7 +37,8 @@ class topology:
         self.bonds=np.delete(self.bonds,index)
 
     def __init__(self):
-        self.bonds=np.rec.array(np.zeros(0,dtype=[('atoms',int,(2)),('order',int)]))
+        self.elements=np.rec.array(np.zeros(0,dtype=[('color',float,(3)),('radius',float)]))
+        self.bonds=np.rec.array(np.zeros(0,dtype=[('atoms',int,(2)),('order',int),('radius',float)]))
         self.standard = {
                 "Ac": {"color": [0.439216, 0.670588, 0.980392], "radius": 1.114285},
                 "Ag": {"color": [0.752941, 0.752941, 0.752941], "radius": 0.914285},

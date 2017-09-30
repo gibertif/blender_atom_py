@@ -1,49 +1,60 @@
 import numpy as np
 import sys
-sys.path.append('../../src')
+sys.path.append('../../blender_atom_py')
 
 
 import bpy 
-import atom_materials as am
+import atom_materials as ama
+import atom_objects as ao
 import atom_io as aio
 import atom_topology as at 
 
-trj = aio.trajectory('unwrapped.xyz')
+r=aio.xyz('unwrapped.xyz')
+trj=r.trajectory
 t = at.topology()
+t.create_elements(trj[0])
+t.create_bonds(trj[0])
+print(t.elements)
+#print(t.bonds)
+o=ao.objects()
+o.create_spheres(trj[0])
 
 
-sys.exit()
+#m=ama.materials(o.obj)
 
-print(trj.steps)
-
-red = u.makeMaterial("Hydogen",(1,0,0),(1,1,1),1)
-white = u.makeMaterial("Red",(1,1,1),(1,1,1),1)
-
-obj=[]
-for at in trj[0]:
-    p=at.pos
-    bpy.ops.mesh.primitive_uv_sphere_add(location=p,size=0.1)
-    bpy.context.object.name=str(at.name)+str(at.serial)
-    obj.append(bpy.context.object)
-    if 'O' in at.name:
-        am.setMaterial(bpy.context.object, red)
-    if 'H' in at.name:
-        am.setMaterial(bpy.context.object, white)
-
-
-bpy.data.scenes["Scene"].render.fps=16
-
-for st in range(0,trj.steps):
-    f = bpy.data.scenes["Scene"].render.fps * st  # stub
-    for at in trj[st]:
-            p=(at.pos)
-            s=at.serial
-            obj[s].location=p
-            obj[s].keyframe_insert(data_path="location", frame=f)
-    
-    for fc in obj[s].animation_data.action.fcurves: # stub
-        for kp in fc.keyframe_points:
-            kp.handle_left_type = 'VECTOR'
-            kp.handle_right_type = 'VECTOR'
-        fc.update()
-            
+#
+#sys.exit()
+#
+#print(trj.steps)
+#
+#red = u.makeMaterial("Hydogen",(1,0,0),(1,1,1),1)
+#white = u.makeMaterial("Red",(1,1,1),(1,1,1),1)
+#
+#obj=[]
+#for at in trj[0]:
+#    p=at.pos
+#    bpy.ops.mesh.primitive_uv_sphere_add(location=p,size=0.1)
+#    bpy.context.object.name=str(at.name)+str(at.serial)
+#    obj.append(bpy.context.object)
+#    if 'O' in at.name:
+#        am.setMaterial(bpy.context.object, red)
+#    if 'H' in at.name:
+#        am.setMaterial(bpy.context.object, white)
+#
+#
+#bpy.data.scenes["Scene"].render.fps=16
+#
+#for st in range(0,trj.steps):
+#    f = bpy.data.scenes["Scene"].render.fps * st  # stub
+#    for at in trj[st]:
+#            p=(at.pos)
+#            s=at.serial
+#            obj[s].location=p
+#            obj[s].keyframe_insert(data_path="location", frame=f)
+#    
+#    for fc in obj[s].animation_data.action.fcurves: # stub
+#        for kp in fc.keyframe_points:
+#            kp.handle_left_type = 'VECTOR'
+#            kp.handle_right_type = 'VECTOR'
+#        fc.update()
+#            

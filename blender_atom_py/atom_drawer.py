@@ -1,8 +1,8 @@
 import bpy
-import atom_materials as am
+import atom_materials as ama
 import atom_io as aio
 import atom_topology as at
-
+import atom_meshes as ame
 
 class drawer:
 
@@ -10,28 +10,12 @@ class drawer:
         self.zero=0
         self.origin = (0,0,0)
         self.obj=[]
-        bpy.data.scenes["Scene"].render.fps=16       
-        
-    def clean_mesh():
-        bpy.ops.object.select_by_type(type="MESH")
-        bpy.ops.object.delete()
-        self.obj=[]
-    
-#    def scale_atoms(self,scale=1):
-#
-#    def scale_bonds(self,scale=1):
-#
-    def create_objects(self,snapshot,topology):
-        self.obj=[]
-        for at in snapshot:
-            p=at.pos
-            bpy.ops.mesh.primitive_uv_sphere_add(location=p,size=0.1)
-            bpy.context.object.name=str(at.name)+str(at.serial)
-            self.obj.append(bpy.context.object)
+        bpy.data.scenes["Scene"].render.fps=26       
 
 
-        if topology.bonds:
-            for bond in topology.bonds:
+    def draw_snapshot(self,filename):
+        trj = aio.trajectory(filename)
+        topology = at.topology()
 
 
     def animate_objects(self,trajectory):
@@ -50,10 +34,7 @@ class drawer:
                     fc.update()
 
 
-
-
     def animate_all(self,filename,draw_bonds=True):
-        self.clean_mesh()
         trj = aio.trajectory(filename)
         topology = at.topology()
         if draw_bonds:

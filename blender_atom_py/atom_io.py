@@ -1,34 +1,13 @@
 import numpy as np
 
 class trajectory:
-
-    def __init__(self,filename):
+    def __init__(self,steps,natoms):
         self.idx=0
-        self.steps=0
-        self.natoms=0
+        self.steps=steps
+        self.natoms=natoms
         self.fields=0
-        """Read filename in XYZ format and return lists of atoms and coordinates.
-        If opt_prop is set to yes, then also the descriptor are readed (velocities for instance)
-        The function return atoms_name,atoms_coordinates and eventually properties
-        """
-        self._get_steps(filename)
-        self._get_atoms(filename)
         self.traj=np.rec.array(np.zeros((self.steps,self.natoms),dtype=[('serial',int),('name','U4'),('pos',float,3)]))
-
-        fin=open(filename,'r')
-        for it in range(self.steps):
-            line=fin.readline()
-            line=fin.readline()
-            for at in range(self.natoms):
-                line=fin.readline()
-                self.traj[it,at].serial=at
-                self.traj[it,at].name=line.split()[0]
-                self.traj[it,at].pos[0]=line.split()[1]
-                self.traj[it,at].pos[1]=line.split()[2]
-                self.traj[it,at].pos[2]=line.split()[3]
-
-        fin.close()
-
+    
     def __iter__(self):
         return self
     
@@ -42,34 +21,62 @@ class trajectory:
 
     def __getitem__(self,index):
             return self.traj[index]
-    
-    
+
+
+class xyz(trajectory):
+    def __init__(self,filename):
+        """Read filename in XYZ format and return lists of atoms and coordinates.
+        If opt_prop is set to yes, then also the descriptor are readed (velocities for instance)
+        The function return atoms_name,atoms_coordinates and eventually properties
+        """
+        steps=self._get_steps(filename)
+        natoms=self._get_atoms(filename)
+
+#        trajectory.__init__(self,steps,natoms)
+        self.trajectory=trajectory(steps,natoms)
+
+        fin=open(filename,'r')
+        for it in range(steps):
+            line=fin.readline()
+            line=fin.readline()
+            for at in range(natoms):
+                line=fin.readline()
+                self.trajectory.traj[it,at].serial=at
+                self.trajectory.traj[it,at].name=line.split()[0]
+                self.trajectory.traj[it,at].pos[0]=line.split()[1]
+                self.trajectory.traj[it,at].pos[1]=line.split()[2]
+                self.trajectory.traj[it,at].pos[2]=line.split()[3]
+
+        fin.close()
+
     def _rewind(self,filename):
         with open(filename,'r') as fi:
             fi.seek(0,0)
 
     def _get_steps(self,filename):
         self._rewind(filename)
+        steps=0
         for line in open(filename,'r'):
             if len(line.split())==1:
-                self.steps=self.steps+1
-
+                steps=steps+1
         self._rewind(filename)
+        return steps
     
     def _get_atoms(self,filename):
         self._rewind(filename)
         with open(filename,'r') as fi:
-            self.natoms=int(fi.readline().split()[0])
+            natoms=int(fi.readline().split()[0])
         self._rewind(filename)
+        return natoms
     
     def _get_fields(self,filename):
         self._rewind(filename)
         with open(filename,'r') as fi:
             fi.readline()
             fi.readline()
-            self.field=len(fi.readline().split())
-        
+            fields=len(fi.readline().split())
         self._rewind(filename)
+        return fields
 
 
 
