@@ -1,9 +1,40 @@
 import bpy
-import atom_materials as am
-import atom_io as aio
-import atom_topology as at
 
-import bpy
+# TO FINISH THE SHAPEFACTORY CREATION 
+
+class shapefactory:
+    factories={}
+    def addfactory(id, shapefactory):
+        shapefactory.factories.put[id] = shapefactory
+    addfactory = staticmethod(addfactory)
+    # A Template Method:
+    def createshape(id):
+        if id not in shapefactory.factories:
+            shapefactory.factories[id] = eval(id + '.factory()')
+        return shapefactory.factories[id].create()
+    createshape = staticmethod(createshape)
+
+    class shape(object): pass
+
+    class circle(shape):
+        def draw(self): print("Circle.draw")
+        def erase(self): print("Circle.erase")
+        class factory:
+            def create(self): return circle()
+
+    class Square(Shape):
+        def draw(self):
+            print("Square.draw")
+        def erase(self):
+            print("Square.erase")
+        class Factory:
+            def create(self): return Square()
+
+
+
+    def factory(obj_in):
+        class Sphere():
+
 
 class objects:
     def __init__(self):
